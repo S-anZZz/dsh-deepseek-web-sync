@@ -218,4 +218,4 @@ DeepSeek 网页版把登录态存在自己的版本化 localStorage 包装里：
 
 ## License
 
-[MIT](LICENSE) © 2026 ZCFE327
+2026 ZCFE327 和 大肥鱼（DeepSeek）
