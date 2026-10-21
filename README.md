@@ -13,7 +13,7 @@
 >
 > 一个面向 DeepSeek Harness Desktop 的右侧栏插件：不使用 iframe、不弹外部链接、不代理聊天内容，用 Electron 隔离 `webview` 承载真实网页版，并把主题、登录态和提问文本接入 Harness。
 
-[GitHub 仓库](https://github.com/S-anZZz/dsh-deepseek-web-sync) · [详细设计文章](docs/ARTICLE.md) · [MIT License](LICENSE)
+[GitHub 仓库](https://github.com/S-anZZz/dsh-deepseek-web-sync) · [快速开始](QUICKSTART.md) · [详细设计文章](docs/ARTICLE.md)
 
 ---
 
@@ -60,6 +60,8 @@ DeepSeek API 适合在 Harness 里执行任务，DeepSeek 网页版则保留了�
 | 纯文本桥 | 只有用户主动抓取的文本越过 guest 边界，不上传页面内容，不注入 Node 权限 |
 
 ## 安装
+
+> 换电脑安装、首次登录和常见问题，见 [QUICKSTART.md](QUICKSTART.md)。
 
 ### 环境
 
@@ -215,7 +217,3 @@ DeepSeek 网页版把登录态存在自己的版本化 localStorage 包装里：
 **技术来源：ZCFE327**
 
 本项目由 ZCFE327 设计与实现。插件建立在 DeepSeek Harness 公开的 Cordis 插件体系、右侧栏 Tab 域、槽位系统和 Electron 隔离 `webview` 桥之上；DeepSeek 网页版、Harness 及其相关商标归各自权利人所有。
-
-## License
-
-2026 ZCFE327 和 大肥鱼（DeepSeek）
