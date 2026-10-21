@@ -1,0 +1,3 @@
+- insert:
+    - id: deepseek-web-sync3
+      name: '@local/dsh-deepseek-web-sync3'
