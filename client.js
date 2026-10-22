@@ -9,14 +9,14 @@
  * preload, or Harness privileges; only text results cross the boundary.
  */
 window.__ModuleLoader__.load({
-  id: '@local/dsh-deepseek-web-sync3',
+  id: 'dsh-deepseek-web-sync',
   factory(require) {
     const React = require('react');
     const h = React.createElement;
 
     const NS = 'deepseekWebSync3';
     const KIND = 'deepseek-web';
-    const TYPE_ID = '@local/dsh-deepseek-web-sync3/panel';
+    const TYPE_ID = 'dsh-deepseek-web-sync/panel';
     const START_URL = 'https://chat.deepseek.com/';
     const AUTO_PREFIX = 'dsh.deepseek-web-sync3.auto.';
     const AUTH_KEY = 'dsh.deepseek-web-sync3.auth.v1';
