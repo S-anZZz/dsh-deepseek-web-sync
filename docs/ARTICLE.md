@@ -111,7 +111,7 @@ Harness 的右侧栏提供了两层扩展点：
 
 ```js
 {
-  id: '@local/dsh-deepseek-web-sync3/panel',
+  id: 'dsh-deepseek-web-sync/panel',
   kind: 'deepseek-web',
   title: () => 'DeepSeek 网页版',
   keepMounted: true,
