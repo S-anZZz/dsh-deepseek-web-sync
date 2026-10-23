@@ -20,6 +20,7 @@ window.__ModuleLoader__.load({
     const START_URL = 'https://chat.deepseek.com/';
     const AUTO_PREFIX = 'dsh.deepseek-web-sync3.auto.';
     const AUTH_KEY = 'dsh.deepseek-web-sync3.auth.v1';
+    const AUTO_FILL_KEY = 'dsh.deepseek-web-sync3.autofill';
     const MAX_CAPTURE = 20000;
     const AUTH_POLL_MS = 4000;
 
@@ -36,9 +37,18 @@ window.__ModuleLoader__.load({
       'auth.loginOnce': 'Sign in once',
       'auth.hint': 'First run: sign in with the same DeepSeek account once; Harness restores this web session next time. The Harness API credential and the web login stay separate.',
       'capture.label': 'Capture',
+      'capture.from': 'Source',
+      'capture.privacy': 'Only the text you clicked is read; nothing else is read or uploaded.',
+      'capture.privacyContext': 'Only the visible recent messages on this page are read; nothing is uploaded.',
+      'option.autoFill': 'Auto-fill after capture',
+      'option.autoFillHint': 'Insert captured text into the Harness composer automatically. Sending stays manual.',
       'action.selection': 'Selection',
       'action.composer': 'Composer',
       'action.recent': 'Last ask',
+      'action.context': 'Context',
+      'action.insertSend': 'Insert & send',
+      'action.themeSync': 'Re-sync theme',
+      'action.reload': 'Reload',
       'action.refresh': 'Reload page',
       'action.insert': 'Insert into chat',
       'action.copy': 'Copy',
@@ -47,10 +57,18 @@ window.__ModuleLoader__.load({
       'source.selection': 'Selected text',
       'source.composer': 'Composer text',
       'source.recent': 'Last question',
+      'source.context': 'Recent web chat',
       'notice.selectionEmpty': 'No selected text. Select the question in the page first.',
       'notice.composerEmpty': 'The DeepSeek composer is empty.',
       'notice.recentEmpty': 'Could not find the last question. Select it in the page and use Selection.',
       'notice.captured': 'Captured',
+      'notice.contextEmpty': 'Could not read the recent web conversation. Scroll the messages into view and try again.',
+      'notice.autoFilled': 'Captured and inserted into the Harness composer.',
+      'notice.themeSynced': 'Theme re-synced to the embedded page.',
+      'notice.authRestoreFailed': 'The saved web sign-in could not be restored. Sign in once in the page.',
+      'notice.insertedAndSent': 'Inserted and sent to the current Harness composer.',
+      'notice.sendFailed': 'Inserted, but sending failed. Press Enter in the composer.',
+      'notice.sendUnavailable': 'Inserted. Sending is not available from this plugin; press Enter in the composer.',
       'notice.truncated': 'Captured text was truncated to 20,000 characters.',
       'notice.captureFailed': 'Could not read the page. Wait for it to finish loading and try again.',
       'notice.inserted': 'Inserted into the current Harness composer.',
@@ -83,9 +101,18 @@ window.__ModuleLoader__.load({
       'auth.loginOnce': '登录一次即可保持',
       'auth.hint': '首次使用：用同一个 DeepSeek 账号登录一次，之后会随 Harness 自动恢复。Harness API 凭据与网页登录保持独立。',
       'capture.label': '抓取',
+      'capture.from': '来源',
+      'capture.privacy': '只读取你刚才点的那一处文字；不会读取整页或上传内容。',
+      'capture.privacyContext': '只读取当前页面可见的最近几条消息；不会上传内容。',
+      'option.autoFill': '抓取后自动填入',
+      'option.autoFillHint': '抓取后直接填入左侧输入框；发送仍由你手动完成。',
       'action.selection': '选区',
       'action.composer': '输入框',
       'action.recent': '最近提问',
+      'action.context': '上下文',
+      'action.insertSend': '填入并发送',
+      'action.themeSync': '重新同步主题',
+      'action.reload': '重新加载',
       'action.refresh': '重新加载网页',
       'action.insert': '填入当前对话',
       'action.copy': '复制',
@@ -94,10 +121,18 @@ window.__ModuleLoader__.load({
       'source.selection': '网页选中文本',
       'source.composer': '网页输入框',
       'source.recent': '最近一次提问',
+      'source.context': '网页版最近对话',
       'notice.selectionEmpty': '没有选中文字。请先在网页中选中要带过来的提问。',
       'notice.composerEmpty': 'DeepSeek 网页版输入框是空的。',
       'notice.recentEmpty': '没有找到最近提问。请在网页中选中问题后点“选区”。',
       'notice.captured': '已抓取',
+      'notice.contextEmpty': '没有读到网页版最近对话。请先把消息滚动到可见区域再试。',
+      'notice.autoFilled': '已抓取并自动填入左侧输入框。',
+      'notice.themeSynced': '已重新同步主题到内嵌网页。',
+      'notice.authRestoreFailed': '保存的网页登录态恢复失败，请在网页中重新登录一次。',
+      'notice.insertedAndSent': '已填入并发送到当前 Harness 对话。',
+      'notice.sendFailed': '已填入，但发送失败，请在输入框按 Enter。',
+      'notice.sendUnavailable': '已填入；插件无法直接发送，请在输入框按 Enter。',
       'notice.truncated': '抓取内容超过 20,000 字符，已截断。',
       'notice.captureFailed': '读取网页失败。请等页面加载完成后重试。',
       'notice.inserted': '已填入当前 Harness 输入框，可继续编辑或发送。',
@@ -140,7 +175,12 @@ window.__ModuleLoader__.load({
       '.dswv-notice span{flex:1;min-width:0}',
       '.dswv-notice button{flex:none;border:0;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer;padding:0 2px}',
       '.dswv-notice svg{width:12px;height:12px;display:block}',
-      '.dswv-authhint{flex:none;padding:5px 9px;border-bottom:.5px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-secondary);font-size:11px;line-height:1.5}',
+      '.dswv-authhint{flex:none;display:flex;align-items:center;gap:6px;padding:5px 9px;border-bottom:.5px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-secondary);font-size:11px;line-height:1.5}',
+      '.dswv-authhint span{flex:1;min-width:0}',
+      '.dswv-options{flex:none;display:flex;align-items:center;gap:8px;padding:2px 8px 6px;border-bottom:.5px solid var(--dsw-alias-border-l1)}',
+      '.dswv-toggle{display:inline-flex;align-items:center;gap:4px;color:var(--dsw-alias-label-secondary);font-size:11px;cursor:pointer;user-select:none}',
+      '.dswv-toggle input{width:12px;height:12px;margin:0;accent-color:var(--dsw-alias-brand-primary)}',
+      '.dswv-privacy{color:var(--dsw-alias-label-secondary);font-size:10px;line-height:1.4;opacity:.85}',
       '.dswv-capture{flex:none;display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;border-bottom:.5px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-bg-layer-1)}',
       '.dswv-capturehead{display:flex;align-items:center;gap:4px;min-width:0}',
       '.dswv-capturemeta{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-label-secondary);font-size:11px}',
@@ -603,6 +643,7 @@ window.__ModuleLoader__.load({
 
     const ICONS = {
       refresh: () => icon(['M20 11a8 8 0 1 0-2.3 6.7', 'M20 5v6h-6']),
+      theme: () => icon(['M12 3a9 9 0 1 0 0 18h1.4a2.6 2.6 0 0 0 0-5.2H12a2.1 2.1 0 0 1 0-4.2h4a5 5 0 0 0 0-10z', 'M7.5 8h.01', 'M10 6h.01', 'M7 12h.01']),
       external: () => icon(['M14 4h6v6', 'M20 4l-8 8', 'M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5']),
       open: () => icon(['M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13A2.5 2.5 0 0 1 17.5 21h-11A2.5 2.5 0 0 1 4 18.5z', 'M8 8h8', 'M8 12h5']),
       close: () => icon(['M6 6l12 12', 'M18 6 6 18']),
@@ -632,6 +673,7 @@ window.__ModuleLoader__.load({
         selection: '',
         composer: '',
         lastQuestion: '',
+        context: '',
         debug: { groups: 0, assistants: 0, users: 0 },
       };
 
@@ -745,6 +787,24 @@ window.__ModuleLoader__.load({
         /* fallback is optional */
       }
 
+      try {
+        const groups = Array.from(document.querySelectorAll('.ds-message')).filter(visible);
+        const items = [];
+        for (const group of groups.slice(-8)) {
+          const text = tidy(textOf(group));
+          if (!text) continue;
+          const assistant = /assistant/i.test(String(group.className || ''));
+          items.push((assistant ? 'DeepSeek' : '你') + '：' + text.slice(0, 1200));
+        }
+        if (items.length > 0) {
+          result.context = '【DeepSeek 网页版近期对话 / recent messages】\n' + items.slice(-6).join('\n\n');
+        } else if (result.lastQuestion) {
+          result.context = '【DeepSeek 网页版近期对话 / recent messages】\n你：' + result.lastQuestion;
+        }
+      } catch (error) {
+        /* context is optional */
+      }
+
       return result;
     }
 
@@ -789,6 +849,25 @@ window.__ModuleLoader__.load({
       const [source, setSource] = React.useState('');
       const [notice, setNotice] = React.useState('');
       const [busy, setBusy] = React.useState(false);
+      const [autoFill, setAutoFill] = React.useState(() => {
+        try {
+          return localStorage.getItem(AUTO_FILL_KEY) === '1';
+        } catch (error) {
+          return false;
+        }
+      });
+
+      const toggleAutoFill = React.useCallback(() => {
+        setAutoFill((value) => {
+          const next = !value;
+          try {
+            localStorage.setItem(AUTO_FILL_KEY, next ? '1' : '0');
+          } catch (error) {
+            /* storage may be unavailable */
+          }
+          return next;
+        });
+      }, []);
 
       const updateAuth = React.useCallback(async (target) => {
         if (!mountedRef.current || !target) return null;
@@ -864,11 +943,13 @@ window.__ModuleLoader__.load({
                 try {
                   view.reload();
                 } catch (error) {
+                  setNotice(t('notice.authRestoreFailed'));
                   clearSavedAuth();
                   setAuthState('none');
                 }
                 return;
               }
+              setNotice(t('notice.authRestoreFailed'));
               clearSavedAuth();
               setAuthState('none');
             }
@@ -1000,6 +1081,46 @@ window.__ModuleLoader__.load({
         }
       }, [t]);
 
+      const resyncTheme = React.useCallback(() => {
+        const view = viewRef.current;
+        if (!view) return;
+        void applyThemeToView(view);
+        setNotice(t('notice.themeSynced'));
+      }, [t]);
+
+      const insertValue = React.useCallback((text) => {
+        const value = String(text || '').trim();
+        if (!value) return false;
+        const actions = props.inputActions;
+        if (!actions || typeof actions.captureInsertion !== 'function' || typeof actions.insertText !== 'function') {
+          setNotice(t('notice.composerUnavailable'));
+          return false;
+        }
+        const payload = value.endsWith('\n') ? value : value + '\n';
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const span = actions.captureInsertion();
+            if (span && actions.insertText(payload, span)) return true;
+          } catch (error) {
+            console.warn('[deepseek-web-sync] insert failed', error);
+            break;
+          }
+        }
+        setNotice(t('notice.insertFailed'));
+        return false;
+      }, [props.inputActions, t]);
+
+      const sendAction = React.useMemo(() => {
+        const actions = props.inputActions;
+        if (!actions) return null;
+        for (const name of ['submit', 'send', 'sendMessage', 'requestSubmit']) {
+          if (typeof actions[name] === 'function') {
+            return () => actions[name]();
+          }
+        }
+        return null;
+      }, [props.inputActions]);
+
       const capture = React.useCallback(async (kind) => {
         const view = viewRef.current;
         if (!view) return;
@@ -1011,10 +1132,11 @@ window.__ModuleLoader__.load({
           let value = '';
           if (kind === 'selection') value = data.selection || '';
           else if (kind === 'composer') value = data.composer || '';
+          else if (kind === 'context') value = data.context || '';
           else value = data.lastQuestion || '';
           value = String(value).replace(/\r\n/g, '\n').trim();
           if (!value) {
-            setNotice(t(kind === 'selection' ? 'notice.selectionEmpty' : kind === 'composer' ? 'notice.composerEmpty' : 'notice.recentEmpty'));
+            setNotice(t(kind === 'selection' ? 'notice.selectionEmpty' : kind === 'composer' ? 'notice.composerEmpty' : kind === 'context' ? 'notice.contextEmpty' : 'notice.recentEmpty'));
             return;
           }
           let truncated = false;
@@ -1024,6 +1146,14 @@ window.__ModuleLoader__.load({
           }
           setCaptured(value);
           setSource(kind);
+          if (autoFill) {
+            if (insertValue(value)) {
+              setNotice(t('notice.autoFilled'));
+              setCaptured('');
+              setSource('');
+            }
+            return;
+          }
           setNotice((truncated ? t('notice.truncated') + ' ' : '') + t('notice.captured'));
         } catch (error) {
           console.error('[deepseek-web-sync] capture failed', error);
@@ -1031,33 +1161,36 @@ window.__ModuleLoader__.load({
         } finally {
           setBusy(false);
         }
-      }, [t]);
+      }, [autoFill, insertValue, t]);
 
       const insert = React.useCallback(() => {
+        if (!insertValue(captured)) return;
+        setNotice(t('notice.inserted'));
+        setCaptured('');
+        setSource('');
+      }, [captured, insertValue, t]);
+
+      const insertAndSend = React.useCallback(() => {
         const text = captured.trim();
         if (!text) return;
-        const actions = props.inputActions;
-        if (!actions || typeof actions.captureInsertion !== 'function' || typeof actions.insertText !== 'function') {
-          setNotice(t('notice.composerUnavailable'));
+        if (!insertValue(text)) return;
+        setCaptured('');
+        setSource('');
+        if (!sendAction) {
+          setNotice(t('notice.sendUnavailable'));
           return;
         }
-        const payload = text.endsWith('\n') ? text : text + '\n';
-        for (let attempt = 0; attempt < 2; attempt += 1) {
+        setNotice(t('notice.inserted'));
+        window.setTimeout(() => {
           try {
-            const span = actions.captureInsertion();
-            if (span && actions.insertText(payload, span)) {
-              setNotice(t('notice.inserted'));
-              setCaptured('');
-              setSource('');
-              return;
-            }
+            sendAction();
+            setNotice(t('notice.insertedAndSent'));
           } catch (error) {
-            console.warn('[deepseek-web-sync] insert failed', error);
-            break;
+            console.warn('[deepseek-web-sync] send failed', error);
+            setNotice(t('notice.sendFailed'));
           }
-        }
-        setNotice(t('notice.insertFailed'));
-      }, [captured, props.inputActions, t]);
+        }, 0);
+      }, [captured, insertValue, sendAction, t]);
 
       const copy = React.useCallback(async () => {
         if (!captured) return;
@@ -1113,6 +1246,14 @@ window.__ModuleLoader__.load({
           h('button', {
             type: 'button',
             className: 'dswv-icon',
+            title: t('action.themeSync'),
+            'aria-label': t('action.themeSync'),
+            disabled: !ready,
+            onClick: resyncTheme,
+          }, ICONS.theme()),
+          h('button', {
+            type: 'button',
+            className: 'dswv-icon',
             title: t('action.refresh'),
             'aria-label': t('action.refresh'),
             disabled: !ready,
@@ -1142,8 +1283,32 @@ window.__ModuleLoader__.load({
             title: t('source.recent'),
             onClick: () => { void capture('recent'); },
           }, t('action.recent')),
+          h('button', {
+            type: 'button',
+            className: 'dswv-chip',
+            disabled: !ready || busy,
+            title: t('source.context'),
+            onClick: () => { void capture('context'); },
+          }, t('action.context')),
         ),
-        ready && authState === 'none' ? h('div', { className: 'dswv-authhint' }, t('auth.hint')) : null,
+        h('div', { className: 'dswv-options' },
+          h('label', { className: 'dswv-toggle', title: t('option.autoFillHint') },
+            h('input', {
+              type: 'checkbox',
+              checked: autoFill,
+              onChange: toggleAutoFill,
+            }),
+            h('span', null, t('option.autoFill')),
+          ),
+        ),
+        ready && authState === 'none' ? h('div', { className: 'dswv-authhint' },
+          h('span', null, t('auth.hint')),
+          h('button', {
+            type: 'button',
+            className: 'dswv-small',
+            onClick: refresh,
+          }, t('action.reload')),
+        ) : null,
         notice ? h('div', { className: 'dswv-notice' },
           h('span', null, notice),
           h('button', {
@@ -1155,8 +1320,8 @@ window.__ModuleLoader__.load({
         ) : null,
         captured ? h('div', { className: 'dswv-capture' },
           h('div', { className: 'dswv-capturehead' },
-            h('span', { className: 'dswv-capturemeta', title: sourceLabel + ' · ' + captured.length },
-              sourceLabel + ' · ' + captured.length),
+            h('span', { className: 'dswv-capturemeta', title: t('capture.from') + ' · ' + sourceLabel + ' · ' + captured.length },
+              t('capture.from') + ' · ' + sourceLabel + ' · ' + captured.length),
             h('button', {
               type: 'button',
               className: 'dswv-small',
@@ -1176,6 +1341,12 @@ window.__ModuleLoader__.load({
               title: t('action.insert'),
               onClick: insert,
             }, t('action.insert')),
+            sendAction ? h('button', {
+              type: 'button',
+              className: 'dswv-small',
+              title: t('action.insertSend'),
+              onClick: insertAndSend,
+            }, t('action.insertSend')) : null,
           ),
           h('textarea', {
             ref: previewRef,
@@ -1186,6 +1357,7 @@ window.__ModuleLoader__.load({
             'aria-label': t('preview.label'),
             onChange: (event) => setCaptured(event.currentTarget.value),
           }),
+          h('div', { className: 'dswv-privacy' }, source === 'context' ? t('capture.privacyContext') : t('capture.privacy')),
         ) : null,
         h('div', { className: 'dswv-stage' },
           h('div', { className: 'dswv-host', ref: hostRef }),
